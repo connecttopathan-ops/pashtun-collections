@@ -33,9 +33,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Analytics.productViewed(
         productId: widget.handle,
-        productName: widget.handle,
+        title: widget.handle,
         price: 0,
-        currency: 'INR',
       );
     });
   }
@@ -103,7 +102,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 icon: const Icon(Icons.share),
                 onPressed: () {
                   Analytics.shareTapped(
-                      contentType: 'product', contentId: product.id);
+                      productId: product.id, platform: 'share');
                   Share.share(
                       'Check out ${product.title} on Pashtun Collections!\nhttps://pashtuncollections.myshopify.com/products/${product.handle}');
                 },
@@ -379,12 +378,9 @@ class _AddToCartBar extends ConsumerWidget {
                       }
                       Analytics.addToCart(
                         productId: product.id,
-                        productName: product.title,
-                        price: selectedVariant.price.value,
-                        currency: selectedVariant.price.currencyCode,
-                        quantity: 1,
                         variantId: selectedVariant.id,
-                        variantName: selectedVariant.title,
+                        price: selectedVariant.price.value,
+                        quantity: 1,
                       );
                     },
               child: isLoading

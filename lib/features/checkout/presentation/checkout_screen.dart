@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/analytics.dart';
@@ -71,23 +70,21 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     setState(() => _isPlacingOrder = true);
 
     Analytics.checkoutStarted(
-      total: cart.total,
-      currency: cart.currencyCode,
+      cartValue: cart.total,
       itemCount: cart.totalQuantity,
     );
 
     try {
       if (_paymentMethod == _PaymentMethod.razorpay) {
         _razorpayService?.dispose();
-        _razorpayService = RazorpayService(
-          onSuccess: (res) => _onPaymentSuccess(res.paymentId ?? ''),
-          onFailure: (res) {
-            setState(() => _isPlacingOrder = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(res.message ?? 'Payment failed')),
-            );
-          },
-        );
+        _razorpayService = RazorpayService();
+        _razorpayService!.onSuccess = (res) => _onPaymentSuccess(res.paymentId ?? '');
+        _razorpayService!.onError = (res) {
+          setState(() => _isPlacingOrder = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(res.message ?? 'Payment failed')),
+          );
+        };
         _razorpayService!.openCheckout(
           amount: cart.total,
           orderId: 'PC_${DateTime.now().millisecondsSinceEpoch}',
@@ -128,9 +125,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
     Analytics.orderCompleted(
       orderId: paymentId,
-      total: cart.total,
-      currency: cart.currencyCode,
-      itemCount: cart.totalQuantity,
+      revenue: cart.total,
+      paymentMethod: paymentId.startsWith('COD_') ? 'cod' : 'razorpay',
     );
 
     if (mounted) {

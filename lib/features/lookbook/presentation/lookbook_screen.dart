@@ -108,7 +108,7 @@ class _LookbookScreenState extends ConsumerState<LookbookScreen> {
   @override
   void initState() {
     super.initState();
-    Analytics.lookbookViewed();
+    Analytics.lookbookViewed('Lookbook');
   }
 
   @override
@@ -139,7 +139,7 @@ class _LookbookScreenState extends ConsumerState<LookbookScreen> {
             onPressed: () {
               final entry = entries[_currentIndex];
               Analytics.shareTapped(
-                  contentType: 'lookbook', contentId: entry.id);
+                  productId: entry.id, platform: 'share');
               Share.share(
                 'Check out the ${entry.title} lookbook by Pashtun Collections!');
             },
@@ -154,7 +154,7 @@ class _LookbookScreenState extends ConsumerState<LookbookScreen> {
             _currentIndex = index;
             _showPieces = false;
           });
-          Analytics.lookbookViewed(entryTitle: entries[index].title);
+          Analytics.lookbookViewed(entries[index].title);
         },
         itemBuilder: (context, index) {
           final entry = entries[index];

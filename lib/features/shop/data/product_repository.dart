@@ -37,7 +37,7 @@ class ProductRepository {
 
     final collectionData =
         result.data?['collection'] as Map<String, dynamic>?;
-    if (collectionData == null) return ([], false, null);
+    if (collectionData == null) return (<Product>[], false, null);
 
     final productsData =
         collectionData['products'] as Map<String, dynamic>? ?? {};
