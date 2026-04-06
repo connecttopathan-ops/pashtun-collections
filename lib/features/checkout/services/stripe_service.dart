@@ -1,42 +1,16 @@
-import 'package:flutter_stripe/flutter_stripe.dart';
-import '../../../core/constants/api_constants.dart';
+// StripeService stub — re-enable flutter_stripe in pubspec + add STRIPE_PUBLISHABLE_KEY to .env
 
 class StripeService {
   StripeService._();
 
   static void init() {
-    Stripe.publishableKey = ApiConstants.stripePublishableKey;
-    Stripe.merchantIdentifier = 'merchant.com.pashtuncollections.app';
-    Stripe.instance.applySettings();
+    // No-op until flutter_stripe is re-enabled
   }
 
-  /// Call this after receiving a PaymentIntent clientSecret from your backend.
   static Future<void> presentPaymentSheet({
     required String clientSecret,
-    String? customerName,
-    String? customerEmail,
-    String currency = 'usd',
-    int amountInCents = 0,
+    required String customerEmail,
   }) async {
-    await Stripe.instance.initPaymentSheet(
-      paymentSheetParameters: SetupPaymentSheetParameters(
-        paymentIntentClientSecret: clientSecret,
-        merchantDisplayName: 'Pashtun Collections',
-        customerId: null,
-        style: ThemeMode.light,
-        appearance: const PaymentSheetAppearance(
-          colors: PaymentSheetAppearanceColors(
-            primary: Color(0xFFC8860A),
-          ),
-        ),
-        billingDetails: customerEmail != null || customerName != null
-            ? BillingDetails(
-                name: customerName,
-                email: customerEmail,
-              )
-            : null,
-      ),
-    );
-    await Stripe.instance.presentPaymentSheet();
+    throw UnimplementedError('Stripe not configured yet.');
   }
 }
