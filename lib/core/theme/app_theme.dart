@@ -22,7 +22,6 @@ class AppTheme {
         error: AppColors.saleRed,
       ),
       scaffoldBackgroundColor: AppColors.background,
-      fontFamily: 'DMSans',
       textTheme: const TextTheme(
         displayLarge: AppTextStyles.displayLarge,
         displayMedium: AppTextStyles.displayMedium,
