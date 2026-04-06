@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/material.dart' hide CarouselController;
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -15,8 +15,32 @@ class HeroBannerCarousel extends ConsumerStatefulWidget {
 }
 
 class _HeroBannerCarouselState extends ConsumerState<HeroBannerCarousel> {
+  late final PageController _controller;
   int _currentIndex = 0;
-  final CarouselController _controller = CarouselController();
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController();
+    _timer = Timer.periodic(const Duration(seconds: 4), (_) {
+      final banners = ref.read(heroBannersProvider);
+      if (banners.isEmpty || !mounted) return;
+      final next = (_currentIndex + 1) % banners.length;
+      _controller.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,99 +49,90 @@ class _HeroBannerCarouselState extends ConsumerState<HeroBannerCarousel> {
 
     return Column(
       children: [
-        CarouselSlider.builder(
-          carouselController: _controller,
-          itemCount: banners.length,
-          options: CarouselOptions(
-            height: 420,
-            viewportFraction: 1.0,
-            autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 4),
-            autoPlayAnimationDuration: const Duration(milliseconds: 600),
-            autoPlayCurve: Curves.easeInOut,
-            onPageChanged: (index, _) {
-              setState(() => _currentIndex = index);
-            },
-          ),
-          itemBuilder: (context, index, realIndex) {
-            final banner = banners[index];
-            return GestureDetector(
-              onTap: () => context.push(banner.ctaRoute),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Background image
-                  CachedNetworkImage(
-                    imageUrl: banner.imageUrl,
-                    fit: BoxFit.cover,
-                    placeholder: (_, __) => Container(color: AppColors.accent),
-                    errorWidget: (_, __, ___) =>
-                        Container(color: AppColors.accent),
-                  ),
-                  // Gradient overlay
-                  Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black54,
-                        ],
-                        stops: [0.4, 1.0],
+        SizedBox(
+          height: 420,
+          child: PageView.builder(
+            controller: _controller,
+            itemCount: banners.length,
+            onPageChanged: (index) => setState(() => _currentIndex = index),
+            itemBuilder: (context, index) {
+              final banner = banners[index];
+              return GestureDetector(
+                onTap: () => context.push(banner.ctaRoute),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: banner.imageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) =>
+                          Container(color: AppColors.accent),
+                      errorWidget: (_, __, ___) =>
+                          Container(color: AppColors.accent),
+                    ),
+                    Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.transparent, Colors.black54],
+                          stops: [0.4, 1.0],
+                        ),
                       ),
                     ),
-                  ),
-                  // Content
-                  Positioned(
-                    left: 24,
-                    right: 24,
-                    bottom: 40,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          banner.title,
-                          style: AppTextStyles.displayMedium.copyWith(
-                            color: Colors.white,
+                    Positioned(
+                      left: 24,
+                      right: 24,
+                      bottom: 40,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            banner.title,
+                            style: AppTextStyles.displayMedium
+                                .copyWith(color: Colors.white),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          banner.subtitle,
-                          style: AppTextStyles.bodyLarge.copyWith(
-                            color: Colors.white70,
+                          const SizedBox(height: 8),
+                          Text(
+                            banner.subtitle,
+                            style: AppTextStyles.bodyLarge
+                                .copyWith(color: Colors.white70),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () => context.push(banner.ctaRoute),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
-                          ),
-                          child: Text(banner.ctaLabel,
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () => context.push(banner.ctaRoute),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                            ),
+                            child: Text(
+                              banner.ctaLabel,
                               style: AppTextStyles.buttonText
-                                  .copyWith(color: Colors.white)),
-                        ),
-                      ],
+                                  .copyWith(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         ),
         const SizedBox(height: 12),
-        // Dot indicators
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: banners.asMap().entries.map((entry) {
             final isActive = entry.key == _currentIndex;
             return GestureDetector(
-              onTap: () => _controller.animateToPage(entry.key),
+              onTap: () => _controller.animateToPage(
+                entry.key,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              ),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 width: isActive ? 24 : 8,
