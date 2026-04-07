@@ -39,7 +39,7 @@ class NewArrivalsState {
 }
 
 class NewArrivalsNotifier extends AsyncNotifier<NewArrivalsState> {
-  static const _handle = 'new-arrivals';
+  static const _handle = 'frontpage';  // "Best Sellers" collection on 656481.myshopify.com
   static const _pageSize = 10;
 
   @override
@@ -107,7 +107,7 @@ final flashSaleProvider = Provider<FlashSale?>((ref) {
       title: 'Flash Sale',
       subtitle: 'Up to 40% off on selected suits',
       endsAt: saleEnd,
-      collectionHandle: 'flash-sale',
+      collectionHandle: 'frontpage',
     );
   }
   return null;
@@ -132,28 +132,27 @@ class HeroBanner {
 }
 
 final heroBannersProvider = Provider<List<HeroBanner>>((ref) {
-  // Replace with CMS/Shopify metaobjects data in production.
   return const [
     HeroBanner(
-      imageUrl: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=800',
-      title: 'New Bridal Collection',
-      subtitle: 'Exquisite embroidery, timeless grace',
-      ctaLabel: 'Explore Bridal',
-      ctaRoute: '/collection/bridal-collection',
+      imageUrl: 'https://cdn.shopify.com/s/files/1/0832/4091/1137/files/Screenshot2024-04-05at4.49.40PM_61b79f52-e618-41dc-b24f-6a9e40533614.png?v=1743186997',
+      title: 'Best Sellers',
+      subtitle: 'Authentic Pakistani designer suits',
+      ctaLabel: 'Shop Now',
+      ctaRoute: '/collection/frontpage',
     ),
     HeroBanner(
-      imageUrl: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800',
-      title: 'Festive Season',
-      subtitle: 'Celebrate in luxurious Zari work',
-      ctaLabel: 'Shop Festive',
-      ctaRoute: '/collection/festive-collection',
+      imageUrl: 'https://cdn.shopify.com/s/files/1/0832/4091/1137/files/Screenshot2024-04-05at4.46.34PM_7afa1b43-a163-42ef-8220-fc2636d199fd.png?v=1743186991',
+      title: 'Ramsha Chiffon',
+      subtitle: 'Luxury chiffon suits — Vol. 24 & 25',
+      ctaLabel: 'Explore',
+      ctaRoute: '/collection/ramsha',
     ),
     HeroBanner(
-      imageUrl: 'https://images.unsplash.com/photo-1594938298603-d8b0fae75e6c?w=800',
-      title: 'Casual Elegance',
-      subtitle: 'Effortless style for every day',
-      ctaLabel: 'View Collection',
-      ctaRoute: '/collection/casual-wear',
+      imageUrl: 'https://cdn.shopify.com/s/files/1/0832/4091/1137/files/Screenshot2024-04-05at4.49.40PM_61b79f52-e618-41dc-b24f-6a9e40533614.png?v=1743186997',
+      title: 'Khaadi',
+      subtitle: 'Timeless lawn and chiffon collections',
+      ctaLabel: 'View Khaadi',
+      ctaRoute: '/collection/khaadi-lawn-suits',
     ),
   ];
 });
